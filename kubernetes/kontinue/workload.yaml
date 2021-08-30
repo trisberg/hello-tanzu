@@ -1,0 +1,14 @@
+apiVersion: kontinue.io/v1alpha1
+kind: Workload
+metadata:
+  labels:
+    app.kubernetes.io/part-of: hello-fun
+    app.tanzu.vmware.com/workload-type: simple
+  name: hello-fun
+spec:
+  resources: {}
+  source:
+    git:
+      url: https://github.com/sample-accelerators/hello-fun.git
+      ref:
+        branch: main

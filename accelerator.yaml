@@ -1,0 +1,131 @@
+accelerator:
+  displayName: Hello Fun
+  description: A simple Spring Cloud Function serverless app -- includes option for native build
+  iconUrl: https://raw.githubusercontent.com/simple-starters/icons/master/icon-cloud.png
+  tags:
+  - java
+  - spring
+  - cloud
+  - function
+  - serverless
+
+  # options for the UI
+  options:
+  - name: deploymentType
+    inputType: select
+    choices:
+    - value: none
+      text: Skip Kubernetes deployment
+    - value: k8s-simple
+      text: Kubernetes deployment and service
+    - value: knative
+      text: Knative service
+    - value: kontinue
+      text: Kontinue workload
+    defaultValue: k8s-simple
+    required: true
+  - name: gitRepositoryUrl
+    inputType: text
+    label: Git Repository URL
+    defaultValue: https://github.com/trisberg/hello-tanzu.git
+  - name: gitRepositoryBranch
+    inputType: text
+    label: Git Repository Branch
+    defaultValue: main
+
+engine:
+  merge:
+    - include: [ "**" ]
+      exclude: [ "README.md", "kubernetes/**" ]
+    - include: [ "pom.xml" ]
+      chain:
+      - type: ReplaceText
+        substitutions:
+        - text: hello-fun
+          with: "#artifactId"
+    - include: [ "kubernetes/k8s/deployment.yaml", "kubernetes/k8s/service.yaml" ]
+      condition: "#deploymentType == 'k8s-simple'"
+      chain:
+      - type: ReplaceText
+        substitutions:
+        - text: hello-fun
+          with: "#artifactId"
+      - type: RewritePath
+        rewriteTo: "'kubernetes/' + #filename"
+    - include: [ "kubernetes/k8s/skaffold.yaml", "kubernetes/k8s/Tiltfile" ]
+      condition: "#deploymentType == 'k8s-simple'"
+      chain:
+      - type: ReplaceText
+        substitutions:
+        - text: hello-fun
+          with: "#artifactId"
+      - type: RewritePath
+        rewriteTo: "#filename"
+    - include: [ "kubernetes/knative/service.yaml" ]
+      condition: "#deploymentType == 'knative'"
+      chain:
+      - type: ReplaceText
+        substitutions:
+        - text: hello-fun
+          with: "#artifactId"
+      - type: RewritePath
+        rewriteTo: "'kubernetes/' + #filename"
+    - include: [ "kubernetes/knative/skaffold.yaml" ]
+      condition: "#deploymentType == 'knative'"
+      chain:
+      - type: ReplaceText
+        substitutions:
+        - text: hello-fun
+          with: "#artifactId"
+      - type: RewritePath
+        rewriteTo: "#filename"
+    - include: [ "kubernetes/kontinue/workload.yaml" ]
+      condition: "#deploymentType == 'kontinue'"
+      chain:
+      - type: ReplaceText
+        substitutions:
+        - text: ": hello-fun"
+          with: "': ' + #artifactId"
+      - type: ReplaceText
+        substitutions:
+        - text: "https://github.com/sample-accelerators/hello-fun.git"
+          with: "#gitRepositoryUrl"
+      - type: ReplaceText
+        substitutions:
+        - text: "branch: main"
+          with: "'branch: ' + #gitRepositoryBranch"
+      - type: RewritePath
+        rewriteTo: "'kubernetes/' + #filename"
+    - name: README
+      type: Combo
+      onConflict: Append
+      sources:
+      - include: [ "README.md"]
+        chain:
+        - type: ReplaceText
+          substitutions:
+          - text: hello-fun template repo
+            with: "#artifactId"
+      - include: [ "kubernetes/k8s/DEPLOYING.md" ]
+        condition: "#deploymentType == 'k8s-simple'"
+        chain:
+        - type: RewritePath
+          rewriteTo: "'README.md'"
+      - include: [ "kubernetes/knative/DEPLOYING.md" ]
+        condition: "#deploymentType == 'knative'"
+        chain:
+        - type: ReplaceText
+          substitutions:
+          - text: hello-fun
+            with: "#artifactId"
+        - type: RewritePath
+          rewriteTo: "'README.md'"
+      - include: [ "kubernetes/kontinue/DEPLOYING.md" ]
+        condition: "#deploymentType == 'kontinue'"
+        chain:
+        - type: ReplaceText
+          substitutions:
+          - text: hello-fun
+            with: "#artifactId"
+        - type: RewritePath
+          rewriteTo: "'README.md'"
