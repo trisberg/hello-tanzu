@@ -12,7 +12,7 @@ public class HelloAppApplication {
 	@Bean
 	public Function<String, String> hello() {
 		return (in) -> {
-			return "Hejsan " + in;
+			return "Hello " + in;
 		};
 	}
 
