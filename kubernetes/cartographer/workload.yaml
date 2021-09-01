@@ -1,4 +1,4 @@
-apiVersion: kontinue.io/v1alpha1
+apiVersion: carto.run/v1alpha1
 kind: Workload
 metadata:
   labels:

@@ -1,6 +1,6 @@
-## Deploying to Kubernetes as a Kontinue Workload
+## Deploying to Kubernetes as a Cartographer Workload
 
-You need to have Kontinue and Cloud Native Runtimes installed on your cluster.
+You need to have Cartographer and Cloud Native Runtimes installed on your cluster.
 
 ### Deploying to local cluster using Kubectl
 

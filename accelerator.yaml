@@ -20,8 +20,8 @@ accelerator:
       text: Kubernetes deployment and service
     - value: knative
       text: Knative service
-    - value: kontinue
-      text: Kontinue workload
+    - value: workload
+      text: Cartographer workload
     defaultValue: k8s-simple
     required: true
   - name: gitRepositoryUrl
@@ -79,8 +79,8 @@ engine:
           with: "#artifactId"
       - type: RewritePath
         rewriteTo: "#filename"
-    - include: [ "kubernetes/kontinue/workload.yaml" ]
-      condition: "#deploymentType == 'kontinue'"
+    - include: [ "kubernetes/cartographer/workload.yaml" ]
+      condition: "#deploymentType == 'workload'"
       chain:
       - type: ReplaceText
         substitutions:
@@ -120,8 +120,8 @@ engine:
             with: "#artifactId"
         - type: RewritePath
           rewriteTo: "'README.md'"
-      - include: [ "kubernetes/kontinue/DEPLOYING.md" ]
-        condition: "#deploymentType == 'kontinue'"
+      - include: [ "kubernetes/cartographer/DEPLOYING.md" ]
+        condition: "#deploymentType == 'workload'"
         chain:
         - type: ReplaceText
           substitutions:
